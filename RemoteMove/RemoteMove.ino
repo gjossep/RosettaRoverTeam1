@@ -3,38 +3,29 @@
 //Edit all the PINS!!!!!!!!
 //-----------------------------
 //PWM pins for the front two motors
-int PWMfr = 10;
-int PWMfl = 9;
+int PWMfr = 3;
+int PWMfl = 11;
 //The leads for the front right motor
-int L1fr = 8;
-int L2fr = 7;
+int L1fr = 12;
+//int L2fr = 7;
 //The leads for the front left motor
-int L1fl = 6;
-int L2fl = 5; 
+int L1fl = 13;
+//int L2fl = 5; 
 
-
-//PWM pins for the back two motors
-int PWMbr = 20;
-int PWMbl = 19;
-//The leads for the right back motor
-int L1br = 18;
-int L2br = 17;
-//The leads for the left back motor
-int L1bl = 16;
-int L2bl = 15; 
 
 //Setting up the pins for the line tracking sensors.
-int IR1pin = 25; //Left side
-int IR2pin = 26; //Left side
-int IR3pin = 27; //Left side
-int IR4pin = 28; //Middle pin
-int IR5pin = 29; //Right side
-int IR6pin = 30; //Right side
-int IR7pin = 31; //Right side
+int IR1pin = A2; //Left side
+int IR2pin = A3; //Left side
+int IR3pin = A4; //Left side
+int IR4pin = A5; //Middle pin
+int IR5pin = A6; //Right side
+int IR6pin = A7; //Right side
+int IR7pin = A8; //Right side
 
 
 //Set up the char holder
-char val;
+String inputString = "";
+boolean stringComplete = false;
 
 void setup() {
   //Set up the serial port for bluetooth
@@ -45,17 +36,7 @@ void setup() {
   pinMode(PWMfr, OUTPUT);
   pinMode(PWMfl, OUTPUT);
   pinMode(L1fr, OUTPUT);
-  pinMode(L2fr, OUTPUT);
   pinMode(L1fl, OUTPUT);
-  pinMode(L2fl, OUTPUT);
-  
-  //All the back motors
-  pinMode(PWMbr, OUTPUT);
-  pinMode(PWMbl, OUTPUT);
-  pinMode(L1br, OUTPUT);
-  pinMode(L2br, OUTPUT);
-  pinMode(L1bl, OUTPUT);
-  pinMode(L2bl, OUTPUT);
   
   //Setting modes the input sensors
   pinMode(IR1pin, INPUT);
@@ -68,55 +49,51 @@ void setup() {
 }
 
 void loop() {
-  /*
+  if(stringComplete) {
+   changeMotor(inputString);
+   inputString = "";
+   stringComplete = false; 
+  }
+  
+}
+
+void changeMotor(String data) {
+    /*
   ----------------------------------------------------------
-  Char = f = forward
-  Char = b = backward
-  Char = r = right
-  Char = l = left
-  Char = s = stop
+  0 = forward
+  1 = backward
+  2 = right
+  3 = left
+  4 = stop
   ----------------------------------------------------------
   */
- if(Serial.available()) {
-   val = Serial.read();
-   
-   if(val == 'f') {
+   int val = data.toInt();
+   Serial.println("Got: " + val);
+   if(val == '0') {
      //All motor full forward
      setMotor(1, 1, 1);
-     setMotor(2, 1, 1);
-     setMotor(3, 1, 1);
-     setMotor(4, 1, 1);
+     setMotor(2, 1, 1);  
      
-   } else if(val == 'b') {
+   } else if(val == '1') {
      //All motors full backward
      setMotor(1, 1, 0);
      setMotor(2, 1, 0);
-     setMotor(3, 1, 0);
-     setMotor(4, 1, 0);
      
-   } else if(val == 'r') {
+   } else if(val == '2') {
      //All left motor full forward, all right motor full backward
      setMotor(1, 1, 0);
      setMotor(2, 1, 1);
-     setMotor(3, 1, 0);
-     setMotor(4, 1, 1);
      
-   } else if(val == 'l') {
+   } else if(val == '3') {
      //All right motor full forward, all left motor full backward
      setMotor(1, 1, 1);
      setMotor(2, 1, 0);
-     setMotor(3, 1, 1);
-     setMotor(4, 1, 0);
      
-   } else {
+   } else if(val == '4') {
      //All motors 0 speed.
      setMotor(1, 0, 1);
      setMotor(2, 0, 1);
-     setMotor(3, 0, 1);
-     setMotor(4, 0, 1);
-     
    }
- }
 }
 
 void setMotor(int motorID, int motorSpeed, int dir) {
@@ -134,7 +111,7 @@ void setMotor(int motorID, int motorSpeed, int dir) {
   Direction 0 = Backward
   ----------------------------------------------------------
   */
- int hsp = 127;
+ int hsp = 256;
  int lsp = 0;
   
  if(motorID == 1) {
@@ -149,12 +126,12 @@ void setMotor(int motorID, int motorSpeed, int dir) {
    if(dir == 1) {
      //Change the leads and print out
      digitalWrite(L1fr, HIGH);
-     digitalWrite(L2fr, LOW);
+     //digitalWrite(L2fr, LOW);
      Serial.println("Forward Motor FR");
    } else {
      //Change the leads and print out
      digitalWrite(L1fr, LOW);
-     digitalWrite(L2fr, HIGH);
+     //digitalWrite(L2fr, HIGH);
      Serial.println("Backward Motor FR");
    }
    
@@ -171,60 +148,32 @@ void setMotor(int motorID, int motorSpeed, int dir) {
    if(dir == 1) {
      //Change the leads and print out
      digitalWrite(L1fl, HIGH);
-     digitalWrite(L2fl, LOW);
+     //digitalWrite(L2fl, LOW);
      Serial.println("Forward Motor FL");
    } else {
      //Change the leads and print out
      digitalWrite(L1fl, LOW);
-     digitalWrite(L2fl, HIGH);
+     //digitalWrite(L2fl, HIGH);
      Serial.println("Backward Motor FL");
    }
   
- } else if(motorID == 3) {
-   
-   //Check speed
-   if(motorSpeed == 1) {
-    analogWrite(PWMbr, hsp); 
-   } else {
-    analogWrite(PWMbr, lsp); 
-   }
-   //Check direction
-   if(dir == 1) {
-     //Change the leads and print out
-     digitalWrite(L1br, HIGH);
-     digitalWrite(L2br, LOW);
-     Serial.println("Forward Motor BR");
-   } else {
-     //Change the leads and print out
-     digitalWrite(L1br, LOW);
-     digitalWrite(L2br, HIGH);
-     Serial.println("Backward Motor BR");
-   }
-   
- } else {
-   
-   //Check speed
-   if(motorSpeed == 1) {
-    analogWrite(PWMbl, hsp); 
-   } else {
-    analogWrite(PWMbl, lsp); 
-   }
-   //Check direction
-   if(dir == 1) {
-     //Change the leads and print out
-     digitalWrite(L1bl, HIGH);
-     digitalWrite(L2bl, LOW);
-     Serial.println("Forward Motor BL");
-   } else {
-     //Change the leads and print out
-     digitalWrite(L1bl, LOW);
-     digitalWrite(L2bl, HIGH);
-     Serial.println("Backward Motor BL");
-   }
-   
- }
+ } 
   
 }
 
+
+void serialEvent() {
+  while (Serial.available()) {
+    // get the new byte:
+    char inChar = (char)Serial.read(); 
+    // add it to the inputString:
+    inputString += inChar;
+    // if the incoming character is a newline, set a flag
+    // so the main loop can do something about it:
+    if (inChar == '\n') {
+      stringComplete = true;
+    } 
+  }
+}
 
 
