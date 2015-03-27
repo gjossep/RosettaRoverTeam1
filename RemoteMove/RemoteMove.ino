@@ -39,17 +39,18 @@ void setup() {
   pinMode(L1fl, OUTPUT);
   
   //Setting modes the input sensors
-  pinMode(IR1pin, INPUT);
-  pinMode(IR2pin, INPUT);
-  pinMode(IR3pin, INPUT);
-  pinMode(IR4pin, INPUT);
-  pinMode(IR5pin, INPUT);
-  pinMode(IR6pin, INPUT);
-  pinMode(IR7pin, INPUT);
+//  pinMode(IR1pin, INPUT);
+//  pinMode(IR2pin, INPUT);
+//  pinMode(IR3pin, INPUT);
+//  pinMode(IR4pin, INPUT);
+//  pinMode(IR5pin, INPUT);
+//  pinMode(IR6pin, INPUT);
+//  pinMode(IR7pin, INPUT);
 }
 
 void loop() {
   if(stringComplete) {
+    Serial.println(inputString);
    changeMotor(inputString);
    inputString = "";
    stringComplete = false; 
@@ -69,27 +70,27 @@ void changeMotor(String data) {
   */
    int val = data.toInt();
    Serial.println("Got: " + val);
-   if(val == '0') {
+   if(val == 0) {
      //All motor full forward
      setMotor(1, 1, 1);
      setMotor(2, 1, 1);  
      
-   } else if(val == '1') {
+   } else if(val == 1) {
      //All motors full backward
      setMotor(1, 1, 0);
      setMotor(2, 1, 0);
      
-   } else if(val == '2') {
+   } else if(val == 2) {
      //All left motor full forward, all right motor full backward
      setMotor(1, 1, 0);
      setMotor(2, 1, 1);
      
-   } else if(val == '3') {
+   } else if(val == 3) {
      //All right motor full forward, all left motor full backward
      setMotor(1, 1, 1);
      setMotor(2, 1, 0);
      
-   } else if(val == '4') {
+   } else if(val == 4) {
      //All motors 0 speed.
      setMotor(1, 0, 1);
      setMotor(2, 0, 1);
@@ -111,7 +112,7 @@ void setMotor(int motorID, int motorSpeed, int dir) {
   Direction 0 = Backward
   ----------------------------------------------------------
   */
- int hsp = 256;
+ int hsp = 255;
  int lsp = 0;
   
  if(motorID == 1) {
