@@ -13,19 +13,19 @@ int L1l = 13;
 
 
 //Setting up the pins for the line tracking sensors.
-int IR1pin = A2; //Left side
-int IR2pin = A3; //Left side
-int IR3pin = A4; //Left side
-int IR4pin = A5; //Middle pin
-int IR5pin = A6; //Right side
-int IR6pin = A7; //Right side
-int IR7pin = A8; //Right side
+int IR1pin = A7; //Left side
+int IR2pin = A8; //Left side
+int IR3pin = A9; //Left side
+int IR4pin = A10; //Middle pin
+int IR5pin = A11; //Right side
+int IR6pin = A12; //Right side
+int IR7pin = A13; //Right side
 
 
 //Set up the char holder
 String inputString = "";
 boolean stringComplete = false;
-boolean followLine = true;
+boolean followLine = false;
 
 void setup() {
   //Setting all the pins of the motor to output modes
@@ -52,7 +52,7 @@ void loop() {
     Serial.println(inputString);
     command(inputString);
     inputString = "";
-    stringComplete = false; 
+    stringComplete = true; 
   }
 
   if(followLine) {
@@ -75,8 +75,8 @@ void loop() {
       } 
       else {
         //No line!
-        setMotor(1,0,1);
-        setMotor(2,0,0);
+        setMotor(1,200,1);
+        setMotor(2,200,0);
       }
     }
   }
@@ -99,7 +99,8 @@ boolean checkTsplit() {
 }
 boolean aB(int PWMIn) {
   //Convert the analog signal from the sensors to a true or false. 
-  if(PWMIn <= 511) {
+  Serial.println(PWMIn);
+  if(PWMIn <= 790) {
     return(true);
   } 
   else {

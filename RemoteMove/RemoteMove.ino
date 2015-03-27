@@ -51,14 +51,15 @@ void setup() {
 void loop() {
   if(stringComplete) {
     Serial.println(inputString);
-   changeMotor(inputString);
+    int command = inputString.toInt();
+   changeMotor(command);
    inputString = "";
    stringComplete = false; 
   }
   
 }
 
-void changeMotor(String data) {
+void changeMotor(int val) {
     /*
   ----------------------------------------------------------
   0 = forward
@@ -68,7 +69,6 @@ void changeMotor(String data) {
   4 = stop
   ----------------------------------------------------------
   */
-   int val = data.toInt();
    Serial.println("Got: " + val);
    if(val == 0) {
      //All motor full forward
@@ -94,7 +94,7 @@ void changeMotor(String data) {
      //All motors 0 speed.
      setMotor(1, 0, 1);
      setMotor(2, 0, 1);
-   }
+   } 
 }
 
 void setMotor(int motorID, int motorSpeed, int dir) {
