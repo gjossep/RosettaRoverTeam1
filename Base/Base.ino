@@ -75,8 +75,8 @@ void loop() {
       } 
       else {
         //No line!
-        setMotor(1,255,1);
-        setMotor(2,255,0);
+        setMotor(1,0,1);
+        setMotor(2,0,0);
       }
     }
   }
