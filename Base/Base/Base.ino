@@ -10,17 +10,12 @@ int PWMl = 11;
 int L1r = 12;
 int L1l = 13;
 
-
-
-//Setting up the pins for the line tracking sensors.
-int IR1pin = A7; //Left side
-int IR2pin = A8; //Left side
-int IR3pin = A9; //Left side
-int IR4pin = A10; //Middle pin
-int IR5pin = A11; //Right side
-int IR6pin = A12; //Right side
-int IR7pin = A13; //Right side
-
+// CHANGE THESE IF NESSARARY!!! I DONT KNOW THE THE SENORS NUMBERS
+int IR1pin = 31; // Right sensor in 2 sensor row
+int IR2pin = 32; // Left sensor in 2 sensor row
+int IR3pin = 33; // Left sensor in 3 Sensor row
+int IR4pin = 34; // Middle Sensor in 3 Sensor row
+int IR5pin = 35; // Right Sensor in 3 Sensor row
 
 //Set up the char holder
 String inputString = "";
@@ -43,8 +38,7 @@ void setup() {
   pinMode(IR3pin, INPUT);
   pinMode(IR4pin, INPUT);
   pinMode(IR5pin, INPUT);
-  pinMode(IR6pin, INPUT);
-  pinMode(IR7pin, INPUT);
+
 }
 
 void loop() {
@@ -61,7 +55,7 @@ void loop() {
       turnLeft();
     } 
     else {
-      if(aB(analogRead(IR4pin))) {
+      if(aB(digitalRead(IR4pin))) {
         setMotor(1,200,1);
         setMotor(2,200,1);
       } 
@@ -75,8 +69,9 @@ void loop() {
       } 
       else {
         //No line!
-        setMotor(1,200,1);
-        setMotor(2,200,0);
+        setMotor(1,0,1);
+        setMotor(2,0,0);
+        Serial.println("No line!");
       }
     }
   }
@@ -89,7 +84,7 @@ void turnLeft() {
 }
 
 boolean checkTsplit() {
-  if(aB(analogRead(IR1pin)) && aB(analogRead(IR2pin)) && aB(analogRead(IR3pin)) && aB(analogRead(IR4pin)) && aB(analogRead(IR5pin)) && aB(analogRead(IR6pin)) && aB(analogRead(IR7pin))) {
+  if(aB(digitalRead(IR1pin)) && aB(digitalRead(IR2pin)) && aB(digitalRead(IR3pin)) && aB(digitalRead(IR4pin)) && aB(digitalRead(IR5pin))) {
     return true;
   } 
   else {
@@ -100,7 +95,7 @@ boolean checkTsplit() {
 boolean aB(int PWMIn) {
   //Convert the analog signal from the sensors to a true or false. 
   Serial.println(PWMIn);
-  if(PWMIn <= 790) {
+  if(PWMIn == 1) {
     return(true);
   } 
   else {
@@ -109,13 +104,10 @@ boolean aB(int PWMIn) {
 }
 
 boolean readLeftSensors() {
-  if(aB(analogRead(IR1pin))) {
+  if(aB(digitalRead(IR2pin))) {
     return true;
   } 
-  else if(aB(analogRead(IR2pin))) {
-    return true;
-  } 
-  else if(aB(analogRead(IR3pin))) {
+  else if(aB(digitalRead(IR3pin))) {
     return true;
   } 
   else {
@@ -124,13 +116,10 @@ boolean readLeftSensors() {
 }
 
 boolean readRightSensors() {
-  if(aB(analogRead(IR5pin))) {
+  if(aB(digitalRead(IR1pin))) {
     return true;
   } 
-  else if(aB(analogRead(IR6pin))) {
-    return true;
-  } 
-  else if(aB(analogRead(IR7pin))) {
+  else if(aB(digitalRead(IR5pin))) {
     return true;
   } 
   else {

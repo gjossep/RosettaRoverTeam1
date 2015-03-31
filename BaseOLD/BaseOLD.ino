@@ -10,16 +10,20 @@ int PWMl = 11;
 int L1r = 12;
 int L1l = 13;
 
+int IR1pin = 31;
+int IR2pin = 32;
+int IR3pin = 33;
+int IR4pin = 34;
+int IR5pin = 35;
 
-
-//Setting up the pins for the line tracking sensors.
-int IR1pin = A7; //Left side
-int IR2pin = A8; //Left side
-int IR3pin = A9; //Left side
-int IR4pin = A10; //Middle pin
-int IR5pin = A11; //Right side
-int IR6pin = A12; //Right side
-int IR7pin = A13; //Right side
+////Setting up the pins for the line tracking sensors.
+//int IR1pin = A7; //Left side
+//int IR2pin = A8; //Left side
+//int IR3pin = A9; //Left side
+//int IR4pin = A10; //Middle pin
+//int IR5pin = A11; //Right side
+//int IR6pin = A12; //Right side
+//int IR7pin = A13; //Right side
 
 
 //Set up the char holder
@@ -43,8 +47,8 @@ void setup() {
   pinMode(IR3pin, INPUT);
   pinMode(IR4pin, INPUT);
   pinMode(IR5pin, INPUT);
-  pinMode(IR6pin, INPUT);
-  pinMode(IR7pin, INPUT);
+//  pinMode(IR6pin, INPUT);
+//  pinMode(IR7pin, INPUT);
 }
 
 void loop() {
