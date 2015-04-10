@@ -13,13 +13,13 @@ int L1l = 13;
 
 
 //Setting up the pins for the line tracking sensors.
-int IR1pin = A7; //Left side
+
 int IR2pin = A8; //Left side
 int IR3pin = A9; //Left side
 int IR4pin = A10; //Middle pin
 int IR5pin = A11; //Right side
 int IR6pin = A12; //Right side
-int IR7pin = A13; //Right side
+
 
 
 //Set up the char holder
@@ -38,13 +38,13 @@ void setup() {
 
 
   //Setting modes the input sensors
-  pinMode(IR1pin, INPUT);
+
   pinMode(IR2pin, INPUT);
   pinMode(IR3pin, INPUT);
   pinMode(IR4pin, INPUT);
   pinMode(IR5pin, INPUT);
   pinMode(IR6pin, INPUT);
-  pinMode(IR7pin, INPUT);
+
 }
 
 void loop() {
@@ -75,8 +75,8 @@ void loop() {
       } 
       else {
         //No line!
-        setMotor(1,200,1);
-        setMotor(2,200,0);
+        setMotor(1,0,1);
+        setMotor(2,0,0);
       }
     }
   }
@@ -89,7 +89,7 @@ void turnLeft() {
 }
 
 boolean checkTsplit() {
-  if(aB(analogRead(IR1pin)) && aB(analogRead(IR2pin)) && aB(analogRead(IR3pin)) && aB(analogRead(IR4pin)) && aB(analogRead(IR5pin)) && aB(analogRead(IR6pin)) && aB(analogRead(IR7pin))) {
+  if(aB(analogRead(IR2pin)) && aB(analogRead(IR3pin)) && aB(analogRead(IR4pin)) && aB(analogRead(IR5pin)) && aB(analogRead(IR6pin))) {
     return true;
   } 
   else {
@@ -100,7 +100,7 @@ boolean checkTsplit() {
 boolean aB(int PWMIn) {
   //Convert the analog signal from the sensors to a true or false. 
   Serial.println(PWMIn);
-  if(PWMIn <= 790) {
+  if(PWMIn <= 500) {
     return(true);
   } 
   else {
@@ -109,10 +109,7 @@ boolean aB(int PWMIn) {
 }
 
 boolean readLeftSensors() {
-  if(aB(analogRead(IR1pin))) {
-    return true;
-  } 
-  else if(aB(analogRead(IR2pin))) {
+  if(aB(analogRead(IR2pin))) {
     return true;
   } 
   else if(aB(analogRead(IR3pin))) {
@@ -128,9 +125,6 @@ boolean readRightSensors() {
     return true;
   } 
   else if(aB(analogRead(IR6pin))) {
-    return true;
-  } 
-  else if(aB(analogRead(IR7pin))) {
     return true;
   } 
   else {
