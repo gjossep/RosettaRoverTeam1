@@ -25,7 +25,7 @@ int IR6pin = A12; //Right side
 //Set up the char holder
 String inputString = "";
 boolean stringComplete = false;
-boolean followLine = false;
+boolean followLine = true;
 
 void setup() {
   //Setting all the pins of the motor to output modes
@@ -35,7 +35,7 @@ void setup() {
   pinMode(L1r, OUTPUT);
   pinMode(L1l, OUTPUT);
 
-
+  Serial.begin(9600);
 
   //Setting modes the input sensors
 
@@ -48,12 +48,12 @@ void setup() {
 }
 
 void loop() {
-  if(stringComplete) {
-    Serial.println(inputString);
-    command(inputString);
-    inputString = "";
-    stringComplete = true; 
-  }
+//  if(stringComplete) {
+//    Serial.println(inputString);
+//    command(inputString);
+//    inputString = "";
+//    stringComplete = true; 
+//  }
 
   if(followLine) {
     //Check if the middle pin has the sensor. 
@@ -62,16 +62,17 @@ void loop() {
     } 
     else {
       if(aB(analogRead(IR4pin))) {
+        Serial.println("Stright");
         setMotor(1,200,1);
         setMotor(2,200,1);
       } 
       else if(readLeftSensors()) {
-        setMotor(1,200,1);
-        setMotor(2,200,0);
-      } 
-      else if(readRightSensors()) {
         setMotor(1,200,0);
         setMotor(2,200,1);
+      } 
+      else if(readRightSensors()) {
+        setMotor(1,200,1);
+        setMotor(2,200,0);
       } 
       else {
         //No line!
@@ -83,9 +84,12 @@ void loop() {
 }
 
 void turnLeft() {
- setMotor(1,200,0);
- setMotor(2,200,1);
- delay(1000); 
+  setMotor(1,200,1);
+  setMotor(2,200,1);
+  delay(200);
+  setMotor(1,250,0);
+  setMotor(2,250,1);
+  delay(1000);
 }
 
 boolean checkTsplit() {
@@ -101,10 +105,10 @@ boolean aB(int PWMIn) {
   //Convert the analog signal from the sensors to a true or false. 
   Serial.println(PWMIn);
   if(PWMIn <= 500) {
-    return(true);
+    return(false);
   } 
   else {
-    return(false);
+    return(true);
   }
 }
 
