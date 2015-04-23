@@ -12,11 +12,11 @@ int L1l = 13;
 
 //Setting up the pins for the line tracking sensors.
 
-int IR2pin = A12; //Left side
-int IR3pin = A11; //Left side
-int IR4pin = A10; //Middle pin
-int IR5pin = A9; //Right side
-int IR6pin = A8; //Right side
+int IR2pin = 12; //Left side
+int IR3pin = 11; //Left side
+int IR4pin = 10; //Middle pin
+int IR5pin = 9; //Right side
+int IR6pin = 8; //Right side
 
 int splits = 0;
 int left = 0;
@@ -57,19 +57,19 @@ void loop() {
 
   if(followLine) {
     //  Serial.print("Spilts: ");
-    //  Serial.println(splits);
+     Serial.println(splits);
     //  Serial.print("Lefts: ");
     //  Serial.println(left);
     //  Serial.print("Right: ");
-    //Serial.println(right);
+    //  Serial.println(right);
     //  Serial.println("------------------");
 
 
-       Serial.print(aB(analogRead(IR2pin)));
-       Serial.print(aB(analogRead(IR3pin)));
-        Serial.print(aB(analogRead(IR4pin)));
-        Serial.print(aB(analogRead(IR5pin)));
-        Serial.println(aB(analogRead(IR6pin)));
+//    Serial.print(aB(analogRead(IR2pin)));
+//    Serial.print(aB(analogRead(IR3pin)));
+//    Serial.print(aB(analogRead(IR4pin)));
+//    Serial.print(aB(analogRead(IR5pin)));
+//    Serial.println(aB(analogRead(IR6pin)));
 
 
     //Check if the middle pin has the sensor.     
@@ -204,20 +204,47 @@ void turnRight() {
 }
 
 void turnLeftT() {
-  setMotor(1,speedM,1);
-  setMotor(2,speedM,1);
-  delay(700);
-  setMotor(1,70,0);
-  setMotor(2,70,1);
-  delay(1250);
-  setMotor(1,70,1);
-  setMotor(2,70,1);
-  delay(200);
+  if(splits == 1) {
+    // Turn Left
+    setMotor(1,speedM,1);
+    setMotor(2,speedM,1);
+    delay(350);
+    setMotor(1,70,0);
+    setMotor(2,70,1);
+    delay(1000);
+    setMotor(1,70,1);
+    setMotor(2,70,1);
+    delay(200);
+    setMotor(1,speedM,1);
+    setMotor(2,speedM,1);
+    delay(200); 
+    
+    //stop, and go backwards.
+    setMotor(1,speedM,0);
+    setMotor(2,speedM,0);
+    delay(3000);
+    
+    setMotor(1,0,0);
+    setMotor(2,0,0);
+    
+    
+  } else {
+    setMotor(1,speedM,1);
+    setMotor(2,speedM,1);
+    delay(350);
+    setMotor(1,70,0);
+    setMotor(2,70,1);
+    delay(1000);
+    setMotor(1,70,1);
+    setMotor(2,70,1);
+    delay(200);
+    setMotor(1,speedM,1);
+    setMotor(2,speedM,1);
+    delay(200); 
+  }
+  
 }
 
-void turn360() {
-
-}
 
 boolean checkLeft() {
   if(aB(analogRead(IR2pin)) && aB(analogRead(IR3pin)) && aB(analogRead(IR4pin)) && !aB(analogRead(IR5pin)) && !aB(analogRead(IR6pin))) {
