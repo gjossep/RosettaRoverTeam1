@@ -2,6 +2,10 @@
 //-----------------------------
 //Edit all the PINS!!!!!!!!
 //-----------------------------
+
+#define trigPin 47
+#define echoPin 45 
+
 //PWM pins for the front two motors
 int PWMr = 3;
 int PWMl = 11;
@@ -9,7 +13,6 @@ int PWMl = 11;
 //The leads for the motors
 int L1r = 12;
 int L1l = 13;
-
 
 
 //Setting up the pins for the line tracking sensors.
@@ -29,6 +32,14 @@ boolean followLine = true;
 
 void setup() {
   //Setting all the pins of the motor to output modes
+  
+  attachInterrupt(LEFT, LwheelSpeed, CHANGE);    //init the interrupt mode for the digital pin 2
+  attachInterrupt(RIGHT, RwheelSpeed, CHANGE);
+  
+  //Ultrasonic 
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+  
   //All front motors
   pinMode(PWMr, OUTPUT);
   pinMode(PWMl, OUTPUT);
@@ -48,12 +59,24 @@ void setup() {
 }
 
 void loop() {
-//  if(stringComplete) {
-//    Serial.println(inputString);
-//    command(inputString);
-//    inputString = "";
-//    stringComplete = true; 
-//  }
+  if(stringComplete) {
+    //Serial.println(inputString);
+    command(inputString);
+    inputString = "";
+    stringComplete = true; 
+  }
+  
+  static unsigned long timer = 0;  //print manager timer
+   
+  if(millis() - timer > 100){                   
+    lastSpeed[LEFT] = coder[LEFT];   //record the latest speed value
+    lastSpeed[RIGHT] = coder[RIGHT];
+    coder[LEFT] = 0;                 //clear the data buffer
+    coder[RIGHT] = 0;
+    
+    timer = millis();
+  }
+  
 
   if(followLine) {
     //Check if the middle pin has the sensor. 
@@ -62,7 +85,7 @@ void loop() {
     } 
     else {
       if(aB(analogRead(IR4pin))) {
-        Serial.println("Stright");
+        //Serial.println("Stright");
         setMotor(1,200,1);
         setMotor(2,200,1);
       } 
@@ -103,13 +126,34 @@ boolean checkTsplit() {
 }
 boolean aB(int PWMIn) {
   //Convert the analog signal from the sensors to a true or false. 
-  Serial.println(PWMIn);
+  //Serial.println(PWMIn);
   if(PWMIn <= 500) {
     return(false);
   } 
   else {
     return(true);
   }
+}
+
+long ultraSonic() {
+  long duration, distance;
+
+  digitalWrite(trigPin, LOW);  // Added this line
+
+  delayMicroseconds(2); // Added this line
+
+  digitalWrite(trigPin, HIGH);
+
+  delayMicroseconds(10); // Added this line
+
+  digitalWrite(trigPin, LOW);
+
+  duration = pulseIn(echoPin, HIGH);
+
+  distance = (duration/2) / 29.1;
+
+  return distance;
+  
 }
 
 boolean readLeftSensors() {
@@ -147,7 +191,7 @@ void command(String data) {
    ----------------------------------------------------------
    */
   int val = data.toInt();
-  Serial.println("Got: " + val);
+  //Serial.println("Got: " + val);
   if(val == 0) {
     if(followLine) {
       followLine = false; 
@@ -199,12 +243,12 @@ void setMotor(int motorID, int motorSpeed, int dir) {
     if(dir == 1) {
       //Change the leads and print out
       digitalWrite(L1r, HIGH);
-      Serial.println("Forward Motor Right");
+      //Serial.println("Forward Motor Right");
     } 
     else {
       //Change the leads and print out
       digitalWrite(L1r, LOW);
-      Serial.println("Backward Motor Right");
+      //Serial.println("Backward Motor Right");
     }
 
 
@@ -218,12 +262,12 @@ void setMotor(int motorID, int motorSpeed, int dir) {
     if(dir == 1) {
       //Change the leads and print out
       digitalWrite(L1l, HIGH);
-      Serial.println("Forward Motor Left");
+      //Serial.println("Forward Motor Left");
     } 
     else {
       //Change the leads and print out
       digitalWrite(L1l, LOW);
-      Serial.println("Backward Motor Left");
+      //Serial.println("Backward Motor Left");
     }
 
   } 
@@ -243,6 +287,17 @@ void serialEvent() {
       stringComplete = true;
     } 
   }
+}
+
+void LwheelSpeed()
+{
+  coder[LEFT] ++;  //count the left wheel encoder interrupts
+}
+ 
+ 
+void RwheelSpeed()
+{
+  coder[RIGHT] ++; //count the right wheel encoder interrupts
 }
 
 

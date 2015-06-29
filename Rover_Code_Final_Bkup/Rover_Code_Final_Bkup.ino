@@ -1,3 +1,8 @@
+
+
+String inputString = "";
+boolean stringComplete = false;
+
 //Set up varablies
 //-----------------------------
 //Edit all the PINS!!!!!!!!
@@ -28,9 +33,7 @@ unsigned long rightOldTime;
 unsigned long leftOldTime;
 
 //Set up the char holder
-String inputString = "";
-boolean stringComplete = false;
-boolean followLine = true;
+boolean followLine = false;
 
 void setup() {
   //Setting all the pins of the motor to output modes
@@ -54,10 +57,16 @@ void setup() {
 }
 
 void loop() {
+  
+  if(stringComplete) {
+   handlePackage(inputString);
+   inputString = "";
+   stringComplete = false; 
+  }
 
   if(followLine) {
     //  Serial.print("Spilts: ");
-     Serial.println(splits);
+     //Serial.println(splits);
     //  Serial.print("Lefts: ");
     //  Serial.println(left);
     //  Serial.print("Right: ");
@@ -367,6 +376,49 @@ void setMotor(int motorID, int motorSpeed, int dir) {
   } 
 
 }
+
+
+void handlePackage(String data){
+  switch (data.substring(0,1).toInt()){
+    case 0:
+      Serial.println("Error Package: "+data.substring(0,1));
+      if(followLine) {
+        followLine = false;
+      } else {
+        followLine = true; 
+      }
+      break;
+    case 1:
+      break;
+    case 2:
+      break;
+    case 3:
+      break;
+    case 4:
+      break;
+    case 5:                                        
+      break;
+    default:
+      Serial.println("Uknown package!"+data.substring(1)); //Unknown package
+      break;
+      
+  }
+} 
+
+void serialEvent() {
+  while (Serial.available()) {
+    // get the new byte:
+    char inChar = (char)Serial.read(); 
+    // add it to the inputString:
+    inputString += inChar;
+    // if the incoming character is a newline, set a flag
+    // so the main loop can do something about it:
+    if (inChar == '\n') {
+      stringComplete = true;
+    } 
+  }
+}
+
 
 
 

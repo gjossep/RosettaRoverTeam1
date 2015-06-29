@@ -1,7 +1,13 @@
+
+
 //Set up varablies
 //-----------------------------
 //Edit all the PINS!!!!!!!!
 //-----------------------------
+
+Temp temp(5,6,7);
+
+
 //PWM pins for the front two motors
 int PWMr = 3;
 int PWMl = 11;
@@ -12,17 +18,23 @@ int L1l = 13;
 
 //Setting up the pins for the line tracking sensors.
 
-//int IR2pin = A1; //Left side
-int IR3pin = A2; //Left side
-int IR4pin = A3; //Middle pin
-int IR5pin = A4; //Right side
-//int IR6pin = A5; //Right side
+//Front
+int IR2pin = A8; //Left side
+int IR3pin = A9; //Left side
+int IR4pin = A10; //Middle pin
+int IR5pin = A11; //Right side
+int IR6pin = A12; //Right side
+
+//Back
+int IR7pin = A13; //Right Back
+int IR8pin = A14; //Back middle
+int IR9pin = A15; //Left Back
 
 int splits = 0;
 int left = 0;
 int right = 0;
 
-int speedM = 39;
+int speedM = 100;
 
 unsigned long rightOldTime;
 unsigned long leftOldTime;
@@ -30,9 +42,10 @@ unsigned long leftOldTime;
 //Set up the char holder
 String inputString = "";
 boolean stringComplete = false;
-boolean followLine = true;
+boolean followLine = false;
 
 void setup() {
+  
   //Setting all the pins of the motor to output modes
   //All front motors
   pinMode(PWMr, OUTPUT);
@@ -44,10 +57,15 @@ void setup() {
 
   //Setting modes the input sensors
 
-
+  pinMode(IR2pin, INPUT);
   pinMode(IR3pin, INPUT);
   pinMode(IR4pin, INPUT);
   pinMode(IR5pin, INPUT);
+  pinMode(IR6pin, INPUT);
+  
+  pinMode(IR7pin, INPUT);
+  pinMode(IR8pin, INPUT);
+  pinMode(IR9pin, INPUT);
 
 
 
@@ -55,6 +73,9 @@ void setup() {
 
 void loop() {
 
+  
+  setMotor(1,speedM,1);
+  setMotor(2,speedM,1);
   if(followLine) {
     //  Serial.print("Spilts: ");
     //  Serial.println(splits);
@@ -77,6 +98,11 @@ void loop() {
       //Serial.println("1");
       turnLeftT();
       splits++;
+      
+      if(splits == 2) {
+          tempMeasurement();
+      }
+      
     } 
     else if(aB(analogRead(IR4pin))) {
        //Serial.println("2");
@@ -197,12 +223,60 @@ void turnRight() {
 }
 
 void turnLeftT() {
-  setMotor(1,speedM,1);
-  setMotor(2,speedM,1);
-  delay(700);
-  setMotor(1,speedM,0);
-  setMotor(2,speedM,1);
-  delay(2200);
+  
+  boolean turn = false;
+    if(splits == 2) {
+      turn = false;
+    } else {
+      turn = true; 
+    }
+  
+  if(turn == true) {
+    setMotor(1,speedM,1);
+    setMotor(2,speedM,1);
+    delay(700);
+    setMotor(1,speedM,0);
+    setMotor(2,speedM,1);
+    delay(2200);
+  }
+  
+  
+}
+
+void tempMeasurement() {
+  speedM = 50;
+ // Go backwards code.
+ 
+ //While pushbutton is not pressed
+ //Follow line with back sensors
+ 
+ //After while.
+ //Do measurement and stop.
+ 
+ while(true) {
+   if(aB(analogRead(IR8pin))) {
+       //Serial.println("2");
+      setMotor(1,speedM,0);
+      setMotor(2,speedM,0);
+    } 
+    else if(aB(analogRead(IR9pin))) {
+     // Serial.println("3");
+      setMotor(1,speedM,1);
+      setMotor(2,speedM,0);
+    } 
+    else if(aB(analogRead(IR7pin))) {
+      //Serial.println("4");
+      setMotor(1,speedM,0);
+      setMotor(2,speedM,1);
+    } 
+    else  {
+      setMotor(1,0,1);
+      setMotor(2,0,1);
+    } 
+ }
+ 
+ 
+ speedM = 100;
 }
 
 void turn360() {
