@@ -12,11 +12,11 @@ int L1l = 13;
 
 //Setting up the pins for the line tracking sensors.
 
-//int IR2pin = A1; //Left side
+int IR2pin = A1; //Left side
 int IR3pin = A2; //Left side
 int IR4pin = A3; //Middle pin
 int IR5pin = A4; //Right side
-//int IR6pin = A5; //Right side
+int IR6pin = A5; //Right side
 
 int splits = 0;
 int left = 0;
